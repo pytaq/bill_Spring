@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+<!--    User。定义User bean，该bean的id是user ，class指定该bean实例的实现类-->
+<!--    也可以通过name获取，name可以设置多个值，用逗号隔开-->
+    <bean id="user" class="cn.gwj.entity.User" name="t1,t2">
+        <!-- property元素用来为实例的属性赋值,此处实际是调用setuserName()方法实现赋值操作 -->
+        <!-- 此处将字符串"张三"赋值给userName属性 -->
+        <property name="userName" value="张三"/>
+        <property name="gender" value="0"/>
+<!--        通过ref属性注入已经定义好的bean-->
+        <property name="role" ref="role0"/>
+
+    </bean>
+
+    <bean id="role0" class="cn.gwj.entity.Role">
+        <property name="roleCode" value="ds"/>
+        <property name="roleName" value="系统管理员"/>
+
+    </bean>
+
+    <bean id="userDao" class="cn.gwj.dao.UserDaoImpl"/>
+    <bean id="userService" class="cn.gwj.service.user.UserServiceImpl">
+<!--        给构造方法传入参数 userDao -->
+        <constructor-arg type="java.lang.String" index="1" value="zs"/>
+        <constructor-arg type="cn.gwj.dao.UserDao" index="0" ref="userDao"/>
+    </bean>
+
+<!--    <bean id="userService" class="cn.gwj.service.user.UserServiceImpl"/>-->
+    <bean id="aopLogger" class="cn.gwj.aop.AopLogger"/>
+
+<!--    配置切面-->
+    <aop:config>
+<!--        定义切入点（某方法）  参数类型要传其全路径-->
+        <aop:pointcut id="addPo" expression="execution(public String add(java.lang.String))"/>
+<!--        引用包含增强方法的bean-->
+        <aop:aspect ref="aopLogger">
+<!--            定义前置增强   pointcut-ref已经定义的切点方法-->
+            <aop:before method="before" pointcut-ref="addPo"/>
+<!--            定义后置增强   pointcut-ref已经定义的切点方法 returning在增强方法里面定义的返回值参数-->
+            <aop:after-returning method="after" pointcut-ref="addPo" returning="result"/>
+        </aop:aspect>
+
+    </aop:config>
+</beans>

@@ -1,11 +1,16 @@
 package cn.gwj.dao;
 
 import cn.gwj.entity.User;
+import cn.gwj.service.user.UserService;
+import cn.gwj.service.user.UserServiceImpl;
 import cn.gwj.util.MyBatisUtil;
+import javafx.application.Application;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +24,7 @@ import java.util.List;
 */
 
 public class UserDaoTest {
-    Logger logger=Logger.getLogger(UserDaoTest.class);
+    private Logger logger=Logger.getLogger(UserDaoTest.class);
     @Test
     public void count(){
         SqlSession sqlSession=null;
@@ -99,4 +104,28 @@ public class UserDaoTest {
             logger.info(user.getUserName());
         }
     }
+
+    @Test
+    public void TestSpring(){
+        //通过ClassPathXmlApplicationContext实例化Spring的上下文
+        ApplicationContext applicationContext=new ClassPathXmlApplicationContext("spring-config.xml");
+
+        //通过ApplicationContext的getBean()方法，根据id来获取bean的实例
+        User user=(User)applicationContext.getBean("user");
+        user.setUserCode("asda");
+        logger.info(user.getUserName());
+        logger.info(user.getUserCode());
+        logger.info(user.getRole().getRoleCode());
+    }
+
+    @Test
+    public void testAop(){
+        //通过ClassPathXmlApplicationContext实例化Spring的上下文
+        ApplicationContext applicationContext=new ClassPathXmlApplicationContext("spring-config.xml");
+        //通过ApplicationContext的getBean()方法，根据id来获取bean的实例
+        UserService userService=(UserService)applicationContext.getBean("userService");
+        userService.add("张三");
+
+    }
+
 }
