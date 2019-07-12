@@ -21,4 +21,5 @@ public interface UserDao {
     int updatePwd(@Param("id") int id,@Param("pwd")String password);
     int deleteUserById(int id);
     List<User> getUserList(@Param("userName") String userName,@Param("userRole") int userRole,@Param("currentPageNo") int currentPageNo,@Param("PageSize") int PageSize);
+    int add();
 }

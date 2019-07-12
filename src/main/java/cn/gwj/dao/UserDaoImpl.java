@@ -1,9 +1,11 @@
 package cn.gwj.dao;
 
 import cn.gwj.entity.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class UserDaoImpl implements UserDao{
     @Override
     public int count() {
@@ -43,5 +45,10 @@ public class UserDaoImpl implements UserDao{
     @Override
     public List<User> getUserList(String userName, int userRole, int currentPageNo, int PageSize) {
         return null;
+    }
+
+    @Override
+    public int add() {
+        throw new RuntimeException("数据异常");
     }
 }
