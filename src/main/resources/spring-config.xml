@@ -4,52 +4,88 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-	http://www.springframework.org/schema/aop
-	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
-    http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-    <!--    配置数据源、连接池-->
-    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql:///smbms?useUnicode=true&amp;charcaterEncoding=utf-8e&amp;useSSL=falsee&amp;serverTimezone=UTC"/>
-        <property name="username" value="root"/>
-        <property name="password" value="123"/>
+
+    <!--使用扫描注解注入的包-->
+    <context:component-scan base-package="cn.gwj"/>
+
+    <!--Spring加载属性配置文件-->
+    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="location" value="classpath:mysql.properties"/>
     </bean>
 
+    <!--    配置数据源、连接池-->
+<!--    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">-->
+<!--        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>-->
+<!--        <property name="url" value="jdbc:mysql:///smbms?useUnicode=true&amp;charcaterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone=UTC"/>-->
+<!--        <property name="username" value="root"/>-->
+<!--        <property name="password" value="123"/>-->
+<!--    </bean>-->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${user}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+<!--    &lt;!&ndash; 通过JNDI配置DataSource &ndash;&gt;-->
+<!--    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
+<!--    &lt;!&ndash;        通过jndiName指定引用的JNDI数据源名称&ndash;&gt;-->
+<!--        <property name="jndiName">-->
+<!--            <value>java:comp/env/jdbc/smbms</value>-->
+<!--        </property>-->
+<!--    </bean>-->
+
     <!--    配置SqlSessionFactoryBean-->
-    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!--    引用数据源组件-->
         <property name="dataSource" ref="dataSource"/>
         <!--    引用MyBatis配置文件中的配置-->
         <property name="configLocation" value="classpath:mybatis-config.xml"/>
         <!--    配置SQL映射文件信息-->
-        <property name="mapperLocations">
-<!--            mapperLocations是Resource[]类型-->
-            <list>
-                <value>classpath:cn/gwj/dao/**/*.xml</value>
-            </list>
-        </property>
+        <property name="mapperLocations" value="classpath:cn/gwj/dao/**/*.xml"/>
+        <!--            mapperLocations是Resource[]类型-->
+<!--            <list>-->
+<!--                <value>classpath:cn/gwj/dao/**/*.xml</value>-->
+<!--            </list>-->
+<!--        </property>-->
     </bean>
 
     <!--    配置dao-->
+<!--    <bean class="cn.gwj.dao.UserDaoImpl">-->
+<!--        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+<!--    </bean>-->
 
+    <!--    配置业务bean-->
+    <bean id="userService" class="cn.gwj.service.user.UserServiceImpl"/>
 
-    <!--    配置业务-->
+<!--    配置mapper 映射dao-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+<!--        指明sqlSessionFactoryBean的名字 可要可不要-->
+        <!--        指明工厂sqlSessionFactoryBean的名字-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--        指明接口的包-->
+        <property name="basePackage" value="cn.gwj.dao"/>
+    </bean>
 
-    <context:component-scan base-package="cn.gwj"/>
 <!--&lt;!&ndash;    User。定义User bean，该bean的id是user ，class指定该bean实例的实现类&ndash;&gt;-->
-<!--&lt;!&ndash;    也可以通过name获取，name可以设置多个值，用逗号隔开&ndash;&gt;-->
+<!--&lt;!&ndash;    设值注入 也可以通过name获取，name可以设置多个值，用逗号隔开&ndash;&gt;-->
 <!--    <bean id="user" class="cn.gwj.entity.User" name="t1,t2">-->
 <!--        &lt;!&ndash; property元素用来为实例的属性赋值,此处实际是调用setuserName()方法实现赋值操作 &ndash;&gt;-->
-<!--        &lt;!&ndash; 设值注入 此处将字符串"张三"赋值给userName属性 &ndash;&gt;-->
+<!--        &lt;!&ndash; 此处将字符串"张三"赋值给userName属性 &ndash;&gt;-->
 <!--        <property name="userName" value="张三"/>-->
 <!--        <property name="gender" value="0"/>-->
 <!--&lt;!&ndash;        通过ref属性注入已经定义好的bean&ndash;&gt;-->
 <!--        <property name="role" ref="role0"/>-->
-
 <!--    </bean>-->
 
 <!--    <bean id="role0" class="cn.gwj.entity.Role">-->
@@ -89,8 +125,33 @@
 
 <!--    </aop:config>-->
 
-<!--    声明切面类-->
+    <!--    声明切面类-->
     <bean class="cn.gwj.aop.AopLogger"/>
-<!--    开启使用注解驱动切面-->
+    <!--    开启使用注解驱动切面-->
     <aop:aspectj-autoproxy/>
+
+<!--    定义事务管理器-->
+    <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+<!--    对注解配置的事务的支持-->
+    <tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>
+
+<!--&lt;!&ndash;    配置事务增强绑定事务管理器并针对不同方法定义事务规则&ndash;&gt;-->
+<!--    <tx:advice id="interceptor">-->
+<!--        <tx:attributes>-->
+<!--            <tx:method name="get*" propagation="SUPPORTS"/>-->
+<!--            <tx:method name="update*" propagation="REQUIRED"/>-->
+<!--            <tx:method name="delete*" propagation="REQUIRED"/>-->
+<!--            <tx:method name="add*" propagation="REQUIRED"/>-->
+<!--            <tx:method name="*" propagation="REQUIRED"/>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
+<!--&lt;!&ndash;    配置切面，将事务增加与方法切入点组合&ndash;&gt;-->
+<!--    <aop:config>-->
+<!--&lt;!&ndash;        定义切点&ndash;&gt;-->
+<!--        <aop:pointcut id="serviceMd" expression="execution(* cn.gwj.service..*.*(..))"/>-->
+<!--        <aop:advisor advice-ref="interceptor" pointcut-ref="serviceMd"/>-->
+<!--    </aop:config>-->
+
 </beans>

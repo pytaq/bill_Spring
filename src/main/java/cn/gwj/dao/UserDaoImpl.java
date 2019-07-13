@@ -1,12 +1,13 @@
 package cn.gwj.dao;
 
 import cn.gwj.entity.User;
+import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public class UserDaoImpl implements UserDao{
+
+public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
     @Override
     public int count() {
         return 0;
@@ -50,5 +51,10 @@ public class UserDaoImpl implements UserDao{
     @Override
     public int add() {
         throw new RuntimeException("数据异常");
+    }
+
+    @Override
+    public User getLoginUser(String userCode) throws Exception {
+        return this.getSqlSession().getMapper(UserDao.class).getLoginUser(userCode);
     }
 }

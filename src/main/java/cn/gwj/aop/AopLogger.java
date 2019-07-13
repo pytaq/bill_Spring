@@ -1,7 +1,5 @@
 package cn.gwj.aop;
 
-import cn.gwj.util.MyBatisUtil;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -60,11 +58,9 @@ public class AopLogger {
         }catch (Throwable e){
             logger.error("环绕增强"+pj.getSignature().getName()+"方法发生异常。");
             throw e;
-
         }finally {
             logger.info("环绕增强-"+pj.getSignature().getName()+"方法结束执行。");
         }
-
     }
 
 

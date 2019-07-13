@@ -22,4 +22,11 @@ public interface UserDao {
     int deleteUserById(int id);
     List<User> getUserList(@Param("userName") String userName,@Param("userRole") int userRole,@Param("currentPageNo") int currentPageNo,@Param("PageSize") int PageSize);
     int add();
+    /**
+     * 通过userCode获取User
+     * @param userCode
+     * @return
+     * @throws Exception
+     */
+    public User getLoginUser(String userCode)throws Exception;
 }

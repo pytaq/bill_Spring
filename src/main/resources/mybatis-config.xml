@@ -6,7 +6,7 @@
 <!--通过这个配置文件完成mybatis与数据库的连接-->
 <configuration>
     <!--引入mysql.properties文件-->
-    <properties resource="mysql.properties"/>
+<!--    <properties resource="mysql.properties"/>-->
     <!--    <properties>-->
     <!--        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>-->
     <!--        <property name="url" value="jdbc:mysql:///smbms?useUnicode=true&charcaterEncoding=utf-8&serverTimezone=UTC"/>-->
@@ -14,12 +14,13 @@
     <!--        <property name="password" value="123"/>-->
     <!--    </properties>-->
 
-    <!--配置mybatis的log实现为LOG4J-->
+
     <settings>
+        <!--配置mybatis的log实现为LOG4J-->
         <setting name="logImpl" value="LOG4J"/>
         <!--关闭延迟加载-->
         <setting name="lazyLoadingEnabled" value="false"/>
-<!--禁止自动匹配，默认自动匹配，但是实体属性名和数据库字段名一致，resultType无效-->
+        <!--禁止自动匹配，默认自动匹配，但是实体属性名和数据库字段名一致，resultType无效-->
         <setting name="autoMappingBehavior" value="NONE"/>
     </settings>
 
@@ -27,7 +28,7 @@
     <typeAliases>
     <package name="cn.gwj.entity" />
     <!--<typeAlias type="cn.gwj.entity.User" alias="User"/>-->
-    <package name="cn.gwj.dao" />
+<!--    <package name="cn.gwj.dao" />-->
     </typeAliases>
 
     <!--配置数据库连接-->

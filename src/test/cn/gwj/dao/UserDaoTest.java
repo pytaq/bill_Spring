@@ -128,4 +128,18 @@ public class UserDaoTest {
 
     }
 
+    @Test
+    public void testAop2() throws Exception {
+        // 通过ClassPathXmlApplicationContext实例化Spring的上下文
+        ApplicationContext applicationContext=new ClassPathXmlApplicationContext("spring-config.xml");
+//        String[] sr={"spring-dao.xml","spring-config.xml"};引入多个spring配置
+//        ApplicationContext applicationContext=new ClassPathXmlApplicationContext(sr);
+
+        UserService userService=(UserService) applicationContext.getBean("userService");
+        // userService.deleteUserById(10);
+        User user=  userService.login("admin","1234567");
+
+        logger.info( user.getUserName());
+    }
+
 }
